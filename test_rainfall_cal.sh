@@ -1,16 +1,34 @@
 #!/bin/bash
 
-DATA=(haii,bma rainfall1h,rainfall24h,rainfall_daily,rainfall_yearly 2018-01-01,2018-01-03)
+echo "====================================================================================================================="
+echo "################################### Wellcome to Rainfall calculate program #########################################"
+echo "====================================================================================================================="
+echo "Please input parameter!"
+echo ""
+echo "param format : agency_name rainfall_type startdate(YYYY-MM-DD) enddate(YYYY-MM-DD)"
+echo ""
+echo "Ex. : haii,bma rainfall1h,rainfall24h,rainfall_daily,rainfall_yearly 2018-01-01 2018-01-03"
+echo "====================================================================================================================="
+
+echo "### Agency Name ###"
+echo "haii,bma,dnp,dwr,hd,tmd,egat"
+echo "====================================================================================================================="
+echo "### Rainfall type ###"
+echo "rainfall1h,rainfall24h,rainfall_today,rainfall_daily,rainfall_monthly,rainfall_yearly"
+echo "====================================================================================================================="
+echo -n "parameter:"
+read -a DATA
+
+#DATA=(haii,bma rainfall1h,rainfall24h,rainfall_daily,rainfall_yearly 2018-01-01 2018-01-03)
 
 AGENCY=$(echo ${DATA[0]} | tr "," "\n") #data agency
 RAINTYPE=$(echo ${DATA[1]} | tr "," "\n") #data rainfall type
-DATE=$(echo ${DATA[2]} | tr "," "\n") #data date
+STDATE=$(echo ${DATA[2]} | tr "," "\n") #data date
+ENDATE=$(echo ${DATA[3]} | tr "," "\n") #data date
 
 ARR_RAINTYPE=$(echo $RAINTYPE | tr " " "\n") #array of raifall type
 ARR_AGENCY=$(echo $AGENCY | tr " " "\n") #array of agency
-ARR_DATE=$(echo $DATE | tr " " "\n") #array of agency
 INDEX=() #index of download id rainfall type
-DD=() #new array date
 
 for x in $ARR_RAINTYPE
 do
@@ -24,8 +42,6 @@ do
 	fi
 done
 
-#echo ${INDEX[@]}
-#exit 0
 
 ########################################################################################################
 
@@ -77,18 +93,7 @@ done #end loop prepare download id follow ageny
 
 echo ${DL[@]}
 
-#Prepare start date and end date
-for x in $ARR_DATE
-do
-    DD+=($x)
-done
-
-STDATE=${DD[0]}
-ENDATE=${DD[1]}
-
-echo "Start Date:" $STDATE
-echo "End   Date:" $ENDATE
-
+#Prepare dulation date
 DULATION=$(($(date -d $ENDATE "+%s") - $(date -d $STDATE "+%s")))
 
 #ตรวจสอบความถูกต้องของวันที่
@@ -97,7 +102,7 @@ if [ "$DULATION" -lt 0 ]; then
 	exit 0
 fi
 
-echo "================================================================================="
+echo "====================================================================================================================="
 
 #เช็คหน่วยงานบางตัวไม่มีข้อมูลฝน
 if [ "$DL" == "" ]; then
@@ -173,7 +178,7 @@ do
 		done
 	fi
 
-	echo "================================================================================="
+	echo "====================================================================================================================="
 
 done
 
